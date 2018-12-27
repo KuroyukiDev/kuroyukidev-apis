@@ -27,12 +27,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/anime-cafe', (req, res) => {
-	let data = animeLibData;
+	let dataJSON = animeLibData;
 
 	// let query = req.params.seriesname;
+    let dataStr = JSON.stringify(dataJSON, null, 2);
 
 	res.send({
-        data: data
+        data: JSON.parse(dataStr)
     });
 	
 });
