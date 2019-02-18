@@ -59,8 +59,7 @@ app.get('/api/osrs/ge/:term', (req, res) => {
 	const term = req.params.term;
 	
 	osrs.ge.getItem(term)
-      .then((response) => {
-         const data = JSON.parse(response);
+      .then((data) => {
 		console.log("Response: ", data);
          res.send(data).status(200);
       })
