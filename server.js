@@ -1,4 +1,6 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+const osrs = require('osrs-wrapper');
 const hbs = require('hbs');
 
 const port = process.env.PORT || 3000;
@@ -8,7 +10,7 @@ let animeLibData = require('./public/api-data/anime-cafe-lib.json');
 
 hbs.registerPartials(__dirname + '/views');
 app.set('view engine', 'hbs');
-
+app.use(bodyParser.json());
 
 // Mainenance Page Activator
 // (INFO: Comment out to deactivate Maintenance Page - Uncomment to activate it)
@@ -53,7 +55,19 @@ app.get('/api/anime-cafe', (req, res) => {
 //     }
 // });
 
-
+app.get('/api/osrs/ge/:term', (req, res) => {
+	const term = req.params.term;
+	
+	osrs.ge.getItem(term)
+      .then((response) => {
+         const data = JSON.parse(response);
+		console.log("Response: ", data);
+         res.send(data).status(200);
+      })
+      .catch(() => {
+         res.send('Item Not Found').status(404);
+      });
+});
 
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
