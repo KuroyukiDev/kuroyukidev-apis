@@ -23,21 +23,49 @@ app.use(express.static(__dirname + '/'));
 
 app.get('/', (req, res) => {
   res.render('home.hbs', {
-		pageTitle: 'KY Radio',
+    pageTitle: 'KY Radio',
     subTitle: '~ Home ~'
-	});
+  });
 });
 
 app.get('/api/anime-cafe', (req, res) => {
-	let dataJSON = animeLibData;
+  let dataJSON = animeLibData;
+  
+  // let query = req.params.seriesname;
+  let dataStr = JSON.stringify(dataJSON, null, 2);
+  
+  res.send({
+    data: JSON.parse(dataStr)
+  });
+  
+});
 
-	// let query = req.params.seriesname;
-    let dataStr = JSON.stringify(dataJSON, null, 2);
-
-	res.send({
-        data: JSON.parse(dataStr)
-    });
-	
+app.get('/api/osrs-ge-search/:term', (req, res) => {
+  let term = req.params.term;
+  
+  osrs.ge.getItem(term)
+      .then((res) => {
+        const item = JSON.parse(res).item;
+        const data = JSON.stringify({
+          status: '200',
+          item
+        }, null, 2);
+        
+        res.send({
+          data
+        });
+      })
+      .catch(() => {
+        const data = JSON.stringify({
+          status: '404',
+          item: {}
+        }, null, 2);
+        
+        res.send({
+          data
+        });
+      });
+  
 });
 //
 // app.get('/api/:apiID/:query', (req, res) => {
@@ -55,18 +83,18 @@ app.get('/api/anime-cafe', (req, res) => {
 //     }
 // });
 
-app.get('/api/osrs/ge/:term', (req, res) => {
-	const term = req.params.term;
-	
-	osrs.ge.getItem(term)
-      .then((data) => {
-		console.log("Response: ", data);
-         res.send(data).status(200);
-      })
-      .catch(() => {
-         res.send('Item Not Found').status(404);
-      });
-});
+// app.get('/api/osrs/ge/:term', (req, res) => {
+//   const term = req.params.term;
+//
+//   osrs.ge.getItem(term)
+//       .then((data) => {
+//         console.log("Response: ", data);
+//         res.sendJSON(data).status(200);
+//       })
+//       .catch(() => {
+//         res.send('Item Not Found').status(404);
+//       });
+// });
 
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
